@@ -4,8 +4,8 @@ import Players from './components/Players'
 import GameBoard from './components/GameBoard.jsx'
 import GameOver from './components/GameOver.jsx'
 import Logs from './components/Logs.jsx'
+import { DerivedActivePlayer } from './components/Helpers.jsx'
 import { INITIAL_GAMEBOARD, WINNING_COMBINATIONS } from './static-data.jsx'
-import { DerivedActivePlayer } from './components/helpers.jsx'
 import './App.css'
 
 
