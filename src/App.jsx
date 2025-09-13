@@ -1,34 +1,20 @@
+import { useState } from 'react'
+import Header from './components/Header.jsx'
+import Players from './components/Players'
+import GameBoard from './components/GameBoard.jsx'
+import GameOver from './components/GameOver.jsx'
+import Logs from './components/Logs.jsx'
+import { INITIAL_GAMEBOARD, WINNING_COMBINATIONS } from './static-data.jsx'
+import { DerivedActivePlayer } from './components/helpers.jsx'
 import './App.css'
-import { useState } from 'react';
-import Header from './components/Header';
-import Player from "./components/Player";
-import GameBoard from './components/GameBoard';
-import Logs from './components/Logs';
-import { WINNING_COMBINATIONS } from './winning-combinations';
-import GameOver from './components/GameOver';
 
-const initialBoard = [
-  ['null', 'null', 'null'],
-  ['null', 'null', 'null'],
-  ['null', 'null', 'null']
-];
-
-function derivedActivePlayer(gameTurns) {
-  let currentPlayer = 'X';
-  if (gameTurns.length > 0 && gameTurns[0].player === 'X') {
-    currentPlayer = '0';
-  }
-  return currentPlayer;
-}
 
 function App() {
   const [gameTurns, setGameTurns] = useState([]);
-
-  const activePlayer = derivedActivePlayer(gameTurns);
-
-  let gameBoard = [...initialBoard.map(array => [...array])];
-
-  let winner;
+  const activePlayer = DerivedActivePlayer(gameTurns);
+  let gameBoard = [...INITIAL_GAMEBOARD.map(array => [...array])];
+  let hasWinner = false;
+  let hasDraw = false;
   
   for (const turn of gameTurns) {
     const {square, player} = turn;
@@ -42,16 +28,15 @@ function App() {
     const thrirdSquareSymbol = gameBoard[combinations[2].row][combinations[2].column];
 
     if (firstSquareSymbol && firstSquareSymbol === secondSquareSymbol && firstSquareSymbol === thrirdSquareSymbol) {
-      winner = firstSquareSymbol
+      hasWinner = firstSquareSymbol
     }
   }
 
-  const hasDraw = gameTurns.length === 9 && !winner;
+  hasDraw = gameTurns.length === 9 && !hasWinner;
 
   const handleActivePlayer = (rowIndex, cellIndex) => {
-    // setActivePlayer((currentPlayer) => currentPlayer === 'X' ? '0' : 'X');
     setGameTurns((prevTurns) => {
-      const currentPlayer = derivedActivePlayer(prevTurns)
+      const currentPlayer = DerivedActivePlayer(prevTurns)
       const updateTurns = [
         { square:
           {
@@ -61,7 +46,6 @@ function App() {
           player: currentPlayer
         },
         ...prevTurns];
-
       return updateTurns;
     });
   }
@@ -74,11 +58,8 @@ function App() {
     <>
       <Header />
       <div id='game-container'>
-        <ol id='players' className='highlight-player'>
-          <Player player='Player 1' symbol='X' isActive={activePlayer === 'X'} />
-          <Player player='Player 2' symbol='0' isActive={activePlayer === '0'} />
-        </ol>
-        {winner || hasDraw && <GameOver restartGame={handleRestartMatch} winner={winner} />}
+        <Players activePlayer={activePlayer} />
+        <GameOver restartGame={handleRestartMatch} hasDraw={hasDraw} winner={hasWinner} />
         <GameBoard onSelectSquareBy={handleActivePlayer} board={gameBoard} />
       </div>
       <Logs turns={gameTurns} />

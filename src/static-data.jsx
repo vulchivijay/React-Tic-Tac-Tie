@@ -1,3 +1,9 @@
+export const INITIAL_GAMEBOARD = [
+  [null, null, null],
+  [null, null, null],
+  [null, null, null]
+];
+
 export const WINNING_COMBINATIONS = [
   [
     { row: 0, column: 0 },
